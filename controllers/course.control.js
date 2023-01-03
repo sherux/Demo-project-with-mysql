@@ -1,13 +1,13 @@
 const db = require("../database");
 // ------------------------------get data use store procedure-----------------
 const getusesp = (req, res) => {
-  const sql = "call getallcourse('palanpur')";
+  const sql = "call getallcourse()";
   db.query(sql, (err, row) => {
     if (err) {
       // res.status(400).json({ error: "Something failed!" });
       res.status(400).send(err.message);
     } else {
-      res.status(200).json({ status: "data succesfully fetch", data: row });
+      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
     }
   });
 };
@@ -29,7 +29,7 @@ const getonecourse = (req, res) => {
 // // -----------------------------get one course with student----------------------
 const getallcourse = (req, res) => {
   const sql =
-    "SELECT student.student_name,course.course_name  FROM student INNER JOIN course ON student.id = course.student_id  ";
+    "SELECT student.student_name,course.course_name  FROM student INNER join course ON student.id = course.student_id  ";
   db.query(sql, (err, row) => {
     if (err) {
       //   res.status(400).json({ error: "Something failed!" });

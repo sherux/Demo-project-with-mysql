@@ -3,7 +3,7 @@ const route = express.Router();
 const control = require("../controllers/course.control");
 
 // // ------------student route--------------
-route.get("/getcourseusesp", control.getusesp);
+route.get("/getcourseuse/sp", control.getusesp);
 route.get("/getcourse/:id", control.getonecourse);
 route.get("/getcourses", control.getallcourse);
 route.post("/create", control.createcourses);

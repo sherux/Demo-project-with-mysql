@@ -1,5 +1,17 @@
 const db = require("../database");
 const bcrypt = require("bcrypt");
+// ------------------------------get data use store procedure-----------------
+const getusesp = (req, res) => {
+  const sql = "call getstudent_data('palanpur')";
+  db.query(sql, (err, row) => {
+    if (err) {
+      // res.status(400).json({ error: "Something failed!" });
+      res.status(400).send(err.message);
+    } else {
+      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
+    }
+  });
+};
 // -----------------------------getall students----------------------
 const getallstudents = (req, res) => {
   const sql = "SELECT * FROM student";
@@ -109,6 +121,7 @@ const deletedstudents = async (req, res) => {
   });
 };
 module.exports = {
+  getusesp,
   getallstudents,
   getonestudents,
   createstudents,
