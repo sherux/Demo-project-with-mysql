@@ -1,5 +1,35 @@
 const db = require("../database");
 const bcrypt = require("bcrypt");
+
+// -----------------------------serach query student_name & student_email-----------------------------
+const getserachdata = (req, res) => {
+  const student_name = req.body.student_name;
+  const student_email = req.body.student_email;
+  const sql = "select * from student where student_name=? or student_email=?";
+
+  db.query(sql, [student_name, student_email], (err, row) => {
+    if (err) {
+      // res.status(400).json({ error: "Something failed!" });
+      res.status(400).send(err.message);
+    } else {
+      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
+    }
+  });
+};
+// -------------------------------create search query with index---------------------
+const createindex = (req, res) => {
+  const sql = "drop index stu on student";
+
+  // "create index stu on student(student_name)";
+  db.query(sql, (err, row) => {
+    if (err) {
+      // res.status(400).json({ error: "Something failed!" });
+      res.status(400).send(err.message);
+    } else {
+      res.status(200).json({ status: "data succesfully fetch", data: row });
+    }
+  });
+};
 // ------------------------------get data use store procedure-----------------
 const getusesp = (req, res) => {
   const sql = "call getstudent_data('palanpur')";
@@ -90,9 +120,7 @@ const updatestudents = async (req, res) => {
     [student_mobile, student_country, student_city, id],
     (err, row) => {
       if (!err) {
-        res
-          .status(200)
-          .json({ status: `student succesfully updated ${row.insertId}` });
+        res.status(200).json({ status: `student succesfully updated ` });
         console.log(row);
       } else {
         // res.status(400).json({ error: "Something failed!" });
@@ -110,9 +138,7 @@ const deletedstudents = async (req, res) => {
 
   db.query(sql, [id], (err, row, fields) => {
     if (!err) {
-      res
-        .status(200)
-        .json({ status: `student succesfully deleted ${row.insertId}` });
+      res.status(200).json({ status: `student succesfully deleted` });
       console.log(row);
     } else {
       res.status(400).json({ error: "Something failed!" });
@@ -121,6 +147,8 @@ const deletedstudents = async (req, res) => {
   });
 };
 module.exports = {
+  getserachdata,
+  createindex,
   getusesp,
   getallstudents,
   getonestudents,

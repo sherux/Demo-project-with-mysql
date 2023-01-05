@@ -1,4 +1,34 @@
 const db = require("../database");
+// -------------------------------serch api--------------------------
+const getserachdata = (req, res) => {
+  const emp_name = req.body.emp_name;
+  const emp_destination = req.body.emp_destination;
+  const sql = "select * from employee where emp_name=? or emp_destination=?";
+
+  db.query(sql, [emp_name, emp_destination], (err, row) => {
+    if (err) {
+      // res.status(400).json({ error: "Something failed!" });
+      res.status(400).send(err.message);
+    } else {
+      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
+    }
+  });
+};
+// -------------------------------create search query with index---------------------
+const createindex = (req, res) => {
+  const sql =
+    // "drop index emp on employee";
+
+    "create index emp on employee(emp_name)";
+  db.query(sql, (err, row) => {
+    if (err) {
+      // res.status(400).json({ error: "Something failed!" });
+      res.status(400).send(err.message);
+    } else {
+      res.status(200).json({ status: "data succesfully fetch", data: row });
+    }
+  });
+};
 // ------------------------------get min&max salary-----------------
 const getminAndmaxsalary = (req, res) => {
   const sql = "select max(emp_salary) as salary from employee";
@@ -29,8 +59,8 @@ const getcountemp = (req, res) => {
 };
 // ------------------------------get sum&avg emp api-----------------
 const getsumAndavg = (req, res) => {
-  //   const sql = "select sum(emp_salary) as total_salary from employee";
-  const sql = "select avg(emp_salary) as avg_salary from employee";
+  const sql = "select sum(emp_salary) as total_salary from employee";
+  //   const sql = "select avg(emp_salary) as avg_salary from employee";
 
   db.query(sql, (err, row) => {
     if (err) {
@@ -45,7 +75,7 @@ const getsumAndavg = (req, res) => {
 const getsalary = (req, res) => {
   // const sql = "SELECT * FROM employee WHERE emp_salary BETWEEN 20000 AND 50000";
   const sql =
-    "SELECT  count(empid) as empid , emp_gender  FROM employee group by emp_gender HAVING COUNT(empid) >= 3  ";
+    "SELECT  count(empid) as empid , emp_gender  FROM employee group by emp_gender ";
 
   db.query(sql, (err, rows) => {
     if (err) {
@@ -58,26 +88,33 @@ const getsalary = (req, res) => {
 };
 // -----------------------------getall emps----------------------
 const getallemployees = (req, res) => {
-  const sql = "SELECT * FROM employee";
+  // const sql = "SELECT * FROM employee";
   //   const sql = "SELECT * FROM employee where emp_name like 'a%'";
+  const sql =
+    // "ALTER TABLE course RENAME COLUMN course_id to courseid ";
+    "SELECT student.student_name,student.student_email,employee.emp_salary FROM student INNER join employee ON student.id = employee.studentid  ";
+
   db.query(sql, (err, rows) => {
     if (err) {
       res.status(400).json({ error: "Something failed!" });
+    } else {
+      res.status(200).json({ status: "data succesfully fetch", data: rows });
     }
-    res.status(200).json({ status: "data succesfully fetch", data: rows });
   });
 };
 
 // -----------------------------get one emp----------------------
 const getoneemployees = (req, res) => {
-  const empid = req.params.id;
-  const sql = "SELECT * FROM employee WHERE empid=?";
-  db.query(sql, [empid], (err, row) => {
+  const studentid = req.params.id;
+  // const sql = "SELECT * FROM employee WHERE empid=?";
+  const sql = "create index emp on employee(emp_name)";
+  // "SELECT student.student_name,student.student_email,employee.emp_salary FROM student INNER join employee ON student.id = employee.studentid where studentid=? ";
+
+  db.query(sql, [studentid], (err, row) => {
     if (err) {
       res.status(400).json({ error: "Something failed!" });
     }
     res.status(200).json({ status: "data succesfully fetch", data: row });
-    console.log(row);
   });
 };
 
@@ -87,10 +124,13 @@ const createemployees = async (req, res) => {
   const emp_destination = req.body.emp_destination;
   const emp_gender = req.body.emp_gender;
   const emp_salary = req.body.emp_salary;
+  const studentid = req.body.studentid;
 
   const sql =
-    " INSERT INTO employee(emp_name,emp_destination,emp_gender,emp_salary) values ?";
-  const value = [[emp_name, emp_destination, emp_gender, emp_salary]];
+    " INSERT INTO employee(emp_name,emp_destination,emp_gender,emp_salary,studentid) values ?";
+  const value = [
+    [emp_name, emp_destination, emp_gender, emp_salary, studentid],
+  ];
   db.query(sql, [value], (err, rows) => {
     if (!err) {
       res.status(200).json({
@@ -142,6 +182,8 @@ const deletedemployees = async (req, res) => {
   });
 };
 module.exports = {
+  getserachdata,
+  createindex,
   getminAndmaxsalary,
   getcountemp,
   getsumAndavg,

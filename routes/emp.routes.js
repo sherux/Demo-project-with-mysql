@@ -3,6 +3,8 @@ const route = express.Router();
 const control = require("../controllers/emp.control");
 
 // ------------employeeloyee route--------------
+route.get("/getsearch", control.getserachdata);
+route.get("/createindex", control.createindex);
 route.get("/getminsalary", control.getminAndmaxsalary);
 route.get("/getcount", control.getcountemp);
 route.get("/getsumORavg", control.getsumAndavg);
