@@ -5,16 +5,28 @@ const bcrypt = require("bcrypt");
 const getserachdata = (req, res) => {
   const student_name = req.body.student_name;
   const student_email = req.body.student_email;
-  const sql = "select * from student where student_name=? or student_email=?";
 
-  db.query(sql, [student_name, student_email], (err, row) => {
-    if (err) {
-      // res.status(400).json({ error: "Something failed!" });
-      res.status(400).send(err.message);
-    } else {
-      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
-    }
-  });
+  if (
+    student_name ||
+    student_email ||
+    (student_name && student_email) ||
+    !(student_name || student_email)
+  ) {
+    const sql = `select * from student where student_name like '%${student_name}%' and  student_email like '%${student_email}%' limit 10`;
+
+    db.query(sql, [student_name, student_email], (err, row) => {
+      if (err) {
+        // res.status(400).json({ error: "Something failed!" });
+        res.status(400).send(err.message);
+      } else if (row == "") {
+        res.status(200).json({ status: "sorry,data not found" });
+      } else if (!(student_name || student_email)) {
+        res.json({ status: "please,Enter the data" });
+      } else {
+        res.status(200).json({ status: "data succesfully fetch", data: row });
+      }
+    });
+  }
 };
 // -------------------------------create search query with index---------------------
 const createindex = (req, res) => {

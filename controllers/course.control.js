@@ -2,14 +2,16 @@ const db = require("../database");
 // -------------------------------serch api--------------------------
 const getserachdata = (req, res) => {
   const course_name = req.body.course_name;
-  const sql = "select * from course where course_name=? ";
+  const sql = `select * from course where course_name like '%${course_name}%'`;
 
   db.query(sql, [course_name], (err, row) => {
     if (err) {
       // res.status(400).json({ error: "Something failed!" });
       res.status(400).send(err.message);
+    } else if (row == "") {
+      res.status(200).json({ status: "sorry,data not found" });
     } else {
-      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
+      res.status(200).json({ status: "data succesfully fetch", data: row });
     }
   });
 };
@@ -36,7 +38,7 @@ const getusesp = (req, res) => {
       // res.status(400).json({ error: "Something failed!" });
       res.status(400).json({ message: err.message });
     } else {
-      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
+      res.status(200).json({ status: "data succesfully fetch", data: row });
     }
   });
 };
