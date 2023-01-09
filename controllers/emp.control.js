@@ -3,25 +3,23 @@ const db = require("../database");
 const getserachdata = (req, res) => {
   const emp_name = req.body.emp_name;
   const emp_destination = req.body.emp_destination;
-  if (
-    emp_name ||
-    emp_destination ||
-    (emp_name && emp_destination) ||
-    !(emp_name || emp_destination)
-  ) {
+  if (emp_name || emp_destination || (emp_name && emp_destination)) {
+    // console.log(!(emp_name || emp_destination));
+
     const sql = `select * from employee where emp_name like '%${emp_name}%'and emp_destination like '%${emp_destination}%' `;
     db.query(sql, [emp_name, emp_destination], (err, row) => {
       if (err) {
-        // res.status(400).json({ error: "Something failed!" });
         res.status(400).send(err.message);
       } else if (row == "") {
         res.status(200).json({ status: "sorry,data not found" });
-      } else if (!(emp_name || emp_destination)) {
-        res.status(200).json({ status: "please,enter the data" });
       } else {
         res.status(200).json({ status: "data succesfully fetch", data: row });
       }
     });
+  } else {
+    res
+      .status(200)
+      .json({ status: "please,enter the emp_name and emp_destination" });
   }
 };
 // -------------------------------create search query with index---------------------

@@ -6,12 +6,8 @@ const getserachdata = (req, res) => {
   const student_name = req.body.student_name;
   const student_email = req.body.student_email;
 
-  if (
-    student_name ||
-    student_email ||
-    (student_name && student_email) ||
-    !(student_name || student_email)
-  ) {
+  if (student_name || student_email || (student_name && student_email)) {
+    console.log(!(student_name || student_email));
     const sql = `select * from student where student_name like '%${student_name}%' and  student_email like '%${student_email}%' limit 10`;
 
     db.query(sql, [student_name, student_email], (err, row) => {
@@ -20,12 +16,14 @@ const getserachdata = (req, res) => {
         res.status(400).send(err.message);
       } else if (row == "") {
         res.status(200).json({ status: "sorry,data not found" });
-      } else if (!(student_name || student_email)) {
-        res.json({ status: "please,Enter the data" });
       } else {
         res.status(200).json({ status: "data succesfully fetch", data: row });
       }
     });
+  } else {
+    res
+      .status(200)
+      .json({ status: "please,enter the student_name and student_email" });
   }
 };
 // -------------------------------create search query with index---------------------

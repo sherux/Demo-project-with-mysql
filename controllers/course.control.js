@@ -45,7 +45,7 @@ const getusesp = (req, res) => {
 // -----------------------------get all course with student----------------------
 const getonecourse = (req, res) => {
   const courseid = req.params.id;
-  const sql = "SELECT * FROM USERINFORMATION.studentinformation  ";
+  const sql = "SELECT * FROM USERINFORMATION.studentinformation";
   // "drop index stu on course";
   // "SELECT student.student_name,course.course_name  FROM student INNER JOIN course ON student.id = course.student_id where id=? ";
   db.query(sql, [courseid], (err, rows) => {
