@@ -7,7 +7,6 @@ const getserachdata = (req, res) => {
   const student_email = req.body.student_email;
 
   if (student_name || student_email || (student_name && student_email)) {
-    console.log(!(student_name || student_email));
     const sql = `select * from student where student_name like '%${student_name}%' and  student_email like '%${student_email}%' limit 10`;
 
     db.query(sql, [student_name, student_email], (err, row) => {
@@ -48,7 +47,7 @@ const getusesp = (req, res) => {
       // res.status(400).json({ error: "Something failed!" });
       res.status(400).send(err.message);
     } else {
-      res.status(200).json({ status: "data succesfully fetch", data: row[0] });
+      res.status(200).json({ status: "data succesfully fetch", data: row });
     }
   });
 };
@@ -79,7 +78,7 @@ const getonestudents = (req, res) => {
 
 // ------------------------create student--------------------------------
 const createstudents = async (req, res) => {
-  const hashpassword = await bcrypt.hash(req.body.student_password, 12);
+  const hashpassword = await bcrypt.hash(req.body.student_password, 10);
   const student_name = req.body.student_name;
   const student_email = req.body.student_email;
   const student_password = hashpassword;
@@ -109,8 +108,8 @@ const createstudents = async (req, res) => {
       });
       console.log(rows);
     } else {
-      res.status(400).json({ error: "Something failed!" });
-      // res.status(400).send(err.message);
+      // res.status(400).json({ error: "Something failed!" });
+      res.status(400).send(err.message);
     }
   });
 };
